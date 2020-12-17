@@ -297,8 +297,8 @@ static int32_t walRestoreWalFile(SWal *pWal, void *pVnode, FWalWrite writeFp, ch
       }
     }
 
-    if (pHead->len > size - sizeof(SWalHead)) {
-      wError("vgId:%d, file:%s, wal head len is too large, hver:%" PRIu64 " len:%d offset:%" PRId64, pWal->vgId, name,
+    if (pHead->len < 0 || pHead->len > size - sizeof(SWalHead)) {
+      wError("vgId:%d, file:%s, wal head len out of range, hver:%" PRIu64 " len:%d offset:%" PRId64, pWal->vgId, name,
              pHead->version, pHead->len, offset);
       code = walSkipCorruptedRecord(pWal, pHead, tfd, &offset);
       if (code != TSDB_CODE_SUCCESS) {
